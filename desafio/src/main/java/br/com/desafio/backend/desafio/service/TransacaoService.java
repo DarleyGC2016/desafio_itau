@@ -20,4 +20,9 @@ public class TransacaoService {
         return transacoes;
     }
 
+    public List<Transacao> deleteAll() {
+        transacoes.clear();
+        return transacoes;
+    }
+
 }

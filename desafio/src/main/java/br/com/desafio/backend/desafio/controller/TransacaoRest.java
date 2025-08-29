@@ -6,15 +6,19 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.desafio.backend.desafio.DTO.TransacaoDTO;
 import br.com.desafio.backend.desafio.model.Transacao;
 import br.com.desafio.backend.desafio.service.TransacaoService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Getter
 @Setter
@@ -28,8 +32,7 @@ public class TransacaoRest {
     private List<Transacao> transacoes;
 
     @PostMapping("/transacao")
-    public ResponseEntity<String> cadastroTransacao(TransacaoDTO transacaoDTO) {
-
+    public ResponseEntity<String> cadastroTransacao(@Valid @RequestBody TransacaoDTO transacaoDTO) {
         if (transacaoDTO.getValor() < 0) {
 
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Não é permitido valor negativo");
@@ -43,6 +46,12 @@ public class TransacaoRest {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao cadastrar transação");
         }
+    }
+
+    @DeleteMapping("/transacao")
+    public ResponseEntity<List<Transacao>> excluirTodasTransacoes() {
+         setTransacoes(transacaoService.deleteAll());
+        return  ResponseEntity.ok(getTransacoes());
     }
 
 }
