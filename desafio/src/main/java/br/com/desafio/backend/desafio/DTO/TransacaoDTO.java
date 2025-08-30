@@ -14,7 +14,7 @@ public class TransacaoDTO {
 
     public  boolean validaTempo() {
         OffsetDateTime agora = OffsetDateTime.now();
-        return getDataHora().isBefore(agora) && getDataHora().getYear() == agora.getYear() && getDataHora().getMonth() == agora.getMonth() && getDataHora().getDayOfMonth() != agora.getDayOfMonth() || getDataHora().getYear() < agora.getYear() || getDataHora().getMonthValue() < agora.getMonthValue();
+        return getDataHora().isBefore(agora) && getDataHora().getYear() == agora.getYear() && getDataHora().getMonth() == agora.getMonth() && getDataHora().getDayOfMonth() != agora.getDayOfMonth() || getDataHora().getYear() < agora.getYear() || getDataHora().getMonthValue() < agora.getMonthValue()  || getDataHora().getDayOfMonth() < agora.getDayOfMonth();
     }
 
     @Override
