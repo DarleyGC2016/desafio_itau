@@ -57,7 +57,7 @@ public class TransacaoRest {
     }
 
     @GetMapping("/transacoes")
-    public  ResponseEntity<Estatistica> getMethodName() {
+    public  ResponseEntity<Estatistica> getEstatisticas() {
         return ResponseEntity.ok(transacaoService.getEstatisticas(60));
     }
     

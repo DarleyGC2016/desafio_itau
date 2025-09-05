@@ -20,6 +20,7 @@ public class TransacaoService {
 
     private List<Transacao> transacoes = new ArrayList<>();
 
+    // private List<Transacao> transacoesFilter = new ArrayList<>();
     public List<Transacao> addTransacao(TransacaoDTO transacaoDTO) {
 
         transacoes.add(TransacaoParse.get().toEntity(transacaoDTO));
@@ -32,25 +33,50 @@ public class TransacaoService {
     }
 
     public Estatistica getEstatisticas(int segundo) {
-        
-        if(!transacoes.isEmpty()) {
-            List<Transacao> transacoesFilter = this.transacoes
-            .stream()
-            .filter(tempo -> tempo.getDataHora().getSecond() >= 0 && tempo.getDataHora().getSecond() < segundo)
-            .toList();
-            DoubleSummaryStatistics estatisticas = transacoesFilter.stream()
-                    .mapToDouble(Transacao::getValor)
-                    .summaryStatistics();
-    
-            Estatistica estatistica = new Estatistica();
-            estatistica.setCount(estatisticas.getCount());
-            estatistica.setSum(estatisticas.getSum());
-            estatistica.setAvg(estatisticas.getAverage());
-            estatistica.setMin(estatisticas.getMin());
-            estatistica.setMax(estatisticas.getMax());
-            return estatistica;
+
+        boolean zeroEstatistica = false;
+        int timeDesc = 0;
+        List<Transacao> transacoesFilter = new ArrayList<>();
+
+        if (transacoes.isEmpty()) {
+
+            return new Estatistica();
+
+        } else {
+
+            for (Transacao transacao : getTransacoes()) {
+
+                if (transacao.getDataHora().getSecond() == 0) {
+
+                    zeroEstatistica = true;
+
+                } else {
+
+                    timeDesc = segundo % transacao.getDataHora().getSecond();
+                    if (timeDesc <= segundo - 1) {
+                        transacoesFilter.add(transacao);
+                        zeroEstatistica = false;
+                    }
+                    
+                }
+            }
+
+            if (zeroEstatistica) {
+
+                return new Estatistica();
+
+            } else {
+
+                DoubleSummaryStatistics estatisticas = transacoesFilter.stream()
+                        .mapToDouble(Transacao::getValor)
+                        .summaryStatistics();
+
+                return new Estatistica(estatisticas.getCount(), estatisticas.getSum(),
+                        estatisticas.getAverage(),
+                        estatisticas.getMin(), estatisticas.getMax());
+
+            }
         }
-        return null;
     }
 
 }

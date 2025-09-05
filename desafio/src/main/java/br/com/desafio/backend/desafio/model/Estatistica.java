@@ -12,25 +12,41 @@ public class Estatistica {
     private Double sum;
     private Double avg;
     private Double min;
-    private Double max;       
+    private Double max;
 
     public Double getAvg() {
-        return dadoFormatar(avg);
-    }  
+        return doubleFormat(avg);
+    }
 
     public Double getSum() {
-        return dadoFormatar(sum);
+        return doubleFormat(sum);
     }
 
     public Double getMax() {
-        return dadoFormatar(max);
+        return doubleFormat(max);
     }
 
     public Double getMin() {
-        return dadoFormatar(min);
+        return doubleFormat(min);
     }
-    
-    private Double dadoFormatar(Double valor) {
+
+    public Estatistica() {
+        setCount(0L);
+        setSum(0.0);
+        setAvg(0.0);
+        setMin(0.0);
+        setMax(0.0);
+    }
+
+    public Estatistica(Long count, Double sum, Double avg, Double min, Double max) {
+        setCount(count);
+        setSum(sum);
+        setAvg(avg);
+        setMin(min);
+        setMax(max);
+    }
+
+    private Double doubleFormat(Double valor) {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         String formatado = decimalFormat.format(valor);
         return Double.parseDouble(formatado.replace(",", "."));
