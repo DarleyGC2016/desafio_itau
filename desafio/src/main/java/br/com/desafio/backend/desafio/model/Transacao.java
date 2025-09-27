@@ -16,7 +16,7 @@ public class Transacao {
 
      @Override
      public String toString() {
-          return "Transacao [getDataHora()=" + getDataHora() + ", getId()=" + getId() + ", getValor()=" + getValor()
-                    + "]";
+          return "Transacao [Valor: "+ getValor() + 
+          " DataHora: " + getDataHora() + "]";
      }
 }
