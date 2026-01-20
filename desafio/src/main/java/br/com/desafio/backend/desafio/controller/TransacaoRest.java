@@ -37,7 +37,7 @@ public class TransacaoRest {
     public ResponseEntity<String> cadastroTransacao(@Valid @RequestBody TransacaoDTO transacaoDTO) {
         if (transacaoDTO.getValor() < 0) {
 
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Não é permitido valor negativo");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body("Não é permitido valor negativo");
             
         } else if (transacaoDTO.getValor() >= -1 && transacaoDTO.validaTempo()) {
 
