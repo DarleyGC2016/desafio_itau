@@ -43,7 +43,7 @@ public class TransacaoService {
             return new Estatistica();
 
         } else {
-
+            
             for (Transacao transacao : getTransacoes()) {
 
                 if (transacao.getDataHora().getSecond() == 0) {
@@ -71,9 +71,12 @@ public class TransacaoService {
                         .mapToDouble(Transacao::getValor)
                         .summaryStatistics();
 
-                return new Estatistica(estatisticas.getCount(), estatisticas.getSum(),
+                return new Estatistica(
+                        estatisticas.getCount(),
+                        estatisticas.getSum(),
                         estatisticas.getAverage(),
-                        estatisticas.getMin(), estatisticas.getMax());
+                        estatisticas.getMin(),
+                        estatisticas.getMax());
 
             }
         }

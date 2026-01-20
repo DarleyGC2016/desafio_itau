@@ -1,4 +1,4 @@
-package br.com.desafio.backend.desafio;
+package br.com.desafio.backend.desafio.config;
 
 
 import org.springframework.context.annotation.Bean;
