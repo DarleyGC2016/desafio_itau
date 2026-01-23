@@ -7,7 +7,5 @@ import br.com.desafio.backend.desafio.model.Transacao;
 
 @Repository
 public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
-    // Não sobrescreva o saveAndFlush manualmente aqui, 
-    // a menos que seja estritamente necessário.
     
 }

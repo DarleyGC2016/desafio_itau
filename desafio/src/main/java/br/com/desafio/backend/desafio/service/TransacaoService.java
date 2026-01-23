@@ -2,53 +2,43 @@ package br.com.desafio.backend.desafio.service;
 
 import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import org.springframework.stereotype.Service;
 
-import br.com.desafio.backend.desafio.DTO.TransacaoDTO;
+import br.com.desafio.backend.desafio.DTO.TransacaoResponse;
 import br.com.desafio.backend.desafio.interfaces.Crud;
 import br.com.desafio.backend.desafio.interfaces.Time;
-import br.com.desafio.backend.desafio.interfaces.TransacaoValid;
 import br.com.desafio.backend.desafio.model.Estatistica;
 import br.com.desafio.backend.desafio.model.Transacao;
 import br.com.desafio.backend.desafio.parse.TransacaoParse;
 import br.com.desafio.backend.desafio.repository.TransacaoRepository;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Service
-public class TransacaoService implements Crud<TransacaoDTO, ResponseEntity<String>>, Time, TransacaoValid {
-     
-  
+public class TransacaoService implements Crud<TransacaoResponse, Map<Integer,String>>, Time {
+
     @Autowired
     private TransacaoRepository transacaoRepository;
-
-    private List<Transacao> transacoes = new ArrayList<>();
-
-    // private List<Transacao> transacoesFilter = new ArrayList<>();
-    public List<Transacao> addTransacao(TransacaoDTO transacaoDTO) {
-
-        transacoes.add(TransacaoParse.get().toEntity(transacaoDTO));
-        return transacoes;
+    
+    public Transacao addTransacao(TransacaoResponse transacaoDTO) {
+        return transacaoRepository.save(TransacaoParse.get().toEntity(transacaoDTO));     
     }    
 
-    public List<Transacao> deleteAll() {
-        transacoes.clear();
-        return transacoes;
+    public void deleteAll() {
+        transacaoRepository.deleteAll();
     }
 
     public Estatistica getEstatisticas(int segundo) {
 
+        List<Transacao> transacoesFilter = new ArrayList<>();
+        List<Transacao> transacoes = transacaoRepository.findAll();
+        
         boolean zeroEstatistica = false;
         int timeDesc = 0;
-        List<Transacao> transacoesFilter = new ArrayList<>();
 
         if (transacoes.isEmpty()) {
 
@@ -56,7 +46,7 @@ public class TransacaoService implements Crud<TransacaoDTO, ResponseEntity<Strin
 
         } else {
 
-            for (Transacao transacao : getTransacoes()) {
+            for (Transacao transacao : transacoes) {
 
                 if (transacao.getDataHora().getSecond() == 0) {
 
@@ -95,21 +85,19 @@ public class TransacaoService implements Crud<TransacaoDTO, ResponseEntity<Strin
     }
 
     @Override
-    public ResponseEntity<String> save(TransacaoDTO transacaoDTO) {
+    public Map<Integer,String> save(TransacaoResponse transacaoDTO) {
+         Map<Integer,String> message = new HashMap<>();
+        if (transacaoDTO.valor() < 0) {
+            message.put(HttpStatus.UNPROCESSABLE_CONTENT.value(), "Não é permitido valor negativo");
+            return message;
 
-        if (transacaoDTO.getValor() < 0) {
+        } else if (transacaoDTO.valor() >= -1 && validaTempo(transacaoDTO.dataHora())) {
 
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body("Não é permitido valor negativo");
-
-        } else if (transacaoDTO.getValor() >= -1 && validaTempo(transacaoDTO.getDataHora())) {
-
-            setTransacoes(addTransacao(transacaoDTO));
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("Transação cadastrada com sucesso");
-        } else {
-
-            return validarTransacao(transacaoDTO.getValor(), transacaoDTO.getDataHora());
+            addTransacao(transacaoDTO);
+            message.put(HttpStatus.CREATED.value(), "Transação cadastrada com sucesso");
+            return message; 
         }
+        return null; 
     }
 
 }

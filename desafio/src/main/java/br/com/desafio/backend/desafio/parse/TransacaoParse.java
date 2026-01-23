@@ -1,6 +1,6 @@
 package br.com.desafio.backend.desafio.parse;
 
-import br.com.desafio.backend.desafio.DTO.TransacaoDTO;
+import br.com.desafio.backend.desafio.DTO.TransacaoResponse;
 import br.com.desafio.backend.desafio.model.Transacao;
 
 public class TransacaoParse {
@@ -9,10 +9,10 @@ public class TransacaoParse {
         return new TransacaoParse();
     }
 
-    public Transacao toEntity(TransacaoDTO dto) {
+    public Transacao toEntity(TransacaoResponse dto) {
         Transacao transacao = new Transacao();
-        transacao.setValor(dto.getValor());
-        transacao.setDataHora(dto.getDataHora());
+        transacao.setValor(dto.valor());
+        transacao.setDataHora(dto.dataHora());
         return transacao;
     }
 }
