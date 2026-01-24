@@ -32,7 +32,7 @@ public class TransacaoService implements Crud<TransacaoResponse, Map<Integer,Str
         transacaoRepository.deleteAll();
     }
 
-    public Estatistica getEstatisticas(int segundo) {
+    public Estatistica calculoEstatistico(int segundo) {
 
         List<Transacao> transacoesFilter = new ArrayList<>();
         List<Transacao> transacoes = transacaoRepository.findAll();
@@ -97,7 +97,10 @@ public class TransacaoService implements Crud<TransacaoResponse, Map<Integer,Str
             message.put(HttpStatus.CREATED.value(), "Transação cadastrada com sucesso");
             return message; 
         }
-        return null; 
+        message.put(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Transação invalida, porque o valor e a data e horas não pode ser no presente ou no futuro!");
+        return message; 
     }
 
 }

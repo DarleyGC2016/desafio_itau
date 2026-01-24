@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.desafio.backend.desafio.DTO.TransacaoRequest;
 import br.com.desafio.backend.desafio.DTO.TransacaoResponse;
+import br.com.desafio.backend.desafio.interfaces.Crud;
 import br.com.desafio.backend.desafio.model.Estatistica;
 import br.com.desafio.backend.desafio.service.TransacaoService;
 
@@ -21,19 +22,28 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/desafio")
-public class TransacaoRest {
+public class TransacaoRest implements Crud<TransacaoRequest, ResponseEntity<String>> {
 
     @Autowired
     private TransacaoService transacaoService;
 
     @PostMapping("/transacao")
-    public ResponseEntity<String> cadastroTransacao(@RequestBody @Valid TransacaoRequest transacaoRequest) {
+    @Override
+    public ResponseEntity<String> save(@RequestBody @Valid TransacaoRequest transacaoRequest) {
 
         TransacaoResponse transacao = new TransacaoResponse(
                 transacaoRequest.valor(),
                 transacaoRequest.dataHora());
         Map<Integer, String> response = transacaoService.save(transacao);
-        return ResponseEntity.status(response.keySet().hashCode()).body(response.values().iterator().next());
+        int httpStatusCode = response
+                .keySet()
+                .iterator()
+                .next();
+        String body = response
+                .values()
+                .iterator()
+                .next();
+        return ResponseEntity.status(httpStatusCode).body(body);
     }
 
     @DeleteMapping("/transacao")
@@ -43,8 +53,8 @@ public class TransacaoRest {
     }
 
     @GetMapping("/transacoes")
-    public ResponseEntity<Estatistica> getEstatisticas() {
-        return ResponseEntity.ok(transacaoService.getEstatisticas(60));
+    public ResponseEntity<Estatistica> calculoEstatistico() {
+        return ResponseEntity.ok(transacaoService.calculoEstatistico(60));
     }
 
 }
